@@ -6,8 +6,8 @@ Datta, A., Hanasoge, S., & Goudswaard, J. (2019). Finite‐frequency inversion o
 A. Package contents and overview
 
 1. There are two versions of this Python 2.7 code - serial and parallel, each with their own wrappers and core modules. Other modules are common to the two versions. The parallel code uses MPI for Python (mpi4py) and should be significantly faster than the serial version when solving a large inverse problem (large number of receivers/stations).
-2. The serial code (wrapper) is "anseicca_wrapper_serial.py" and it uses the code module "hans2013_serial.py".
-3. The parallel code (wrapper) is "anseicca_wrapper_parallel.py" and it uses the code module "hans2013_parallel.py".
+2. The serial code (wrapper) is "anseicca_wrapper_serial.py" and it uses the core module "hans2013_serial.py".
+3. The parallel code (wrapper) is "anseicca_wrapper_parallel.py" and it uses the core module "hans2013_parallel.py".
 4. The common modules are "anseicca_utils1.py" and "anseicca_utils2.py".
 5. The last script in the package is "view_result_anseicca.py" which is used to visualize (plot) the results produced by the code. Final as well as intermediate results (for the iterative inverse solution) may be accessed and visualized.
 6. EXAMPLES directory - contains input file(s) required by the code, making this repository self-contained. No external input is required to get a demo of the working code.
