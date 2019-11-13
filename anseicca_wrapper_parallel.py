@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpi4py import MPI
 
 # Custom module imports
-use_reald=True
+use_reald=False
 import anseicca_utils1 as u1
 import anseicca_utils2 as u2
 import hans2013_parallel as h13
@@ -45,7 +45,7 @@ if rank_out==0:
 	# grid location error threshold
 	Delta_thresh = 5 #km
 	glerr_thresh = 0.0226*Delta_thresh
-	map_plots=False
+	map_plots=True
 	
 	smdo=u2.setup_modelling_domain(stno,stid,stx,sty,origx,origy,d_xy,glerr_thresh,map_plots)
 	if smdo.num_chosen != numproc_out:

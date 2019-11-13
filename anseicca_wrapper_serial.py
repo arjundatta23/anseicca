@@ -71,15 +71,15 @@ else:
 ratio_boxes=2
 rad_ring=25
 w_ring=75
-do_inv=False
-iter_only1=True
+do_inv=True
+iter_only1=False
 
 dummy1 = (ratio_boxes*(ngp_inner-1) + 1)**2 * ((sig_char.nsam)/2+1) * 16 * 1e-9
 dummy2 = sig_char.nsam * (smdo.num_chosen**2) * 16 *1e-9
 print "Memory requirement for besselmat array will be %f GB" %(dummy1)
 print "Memory requirement for syncross array will be %f GB" %(dummy2)
 
-#icao = h13.inv_cc_amp(hlbox_outer,ngp_inner,ratio_boxes,smdo.num_chosen,smdo.rchosenx_igp,smdo.rchoseny_igp,wspeed,sig_char,rad_ring,w_ring,do_inv,iter_only1,obsdata,obsdata_info)
+icao = h13.inv_cc_amp(hlbox_outer,ngp_inner,ratio_boxes,smdo.num_chosen,smdo.rchosenx_igp,smdo.rchoseny_igp,wspeed,sig_char,rad_ring,w_ring,do_inv,iter_only1,obsdata,obsdata_info)
 
 ######################################################################### POST RUN #########################################################################
 
