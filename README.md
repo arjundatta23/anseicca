@@ -28,8 +28,8 @@ The key tasks performed (sequentially) by the code, along with associated variab
 
 1. Read in receiver/station location information (e.g. Easting/Northing, UTM coordinates) from a user-specified file which is pre-selected and hardwired into the code (variable "coordfile").
 2. Place all the receivers on a uniform 2-D cartesian grid whose size and density are defined by the user ("hlbox_outer" and "ngp_inner").
-3. Select a subset of receivers to work with, whose location error due to approximation of actual location by uniform grid location, falls below a certain threshold ("glerr_thresh").
-4. Run the central engine of the code, by calling the core "h13" module. This module is an extension of the work by Hanasoge (2013), and its usage is governed by the following key user settings:
+3. Select a subset of receivers to work with, based on a relocation error threshold criterion ("glerr_thresh"). The relocation is from actual coordinates to uniform grid coordinates.
+4. Run the central engine of the code, by calling the core "h13" module. This module is an extension of the work by Hanasoge (2013), and its usage is governed by the following key user settings:  
 	(i) Whether working with synthetic data or real data (parameter "use_reald"). Synthetic data is produced within the h13 module by forward modelling, while real data (variable "infile") is read and prepared for use, in the "anseicca\_utils2" module. I have worked with a specific format of input data used by Datta et al. (2019), however you can write your own class to suit your data, and add it to "anseicca\_utils2".  
 	(ii) The geometry of the problem (parameter "ratio_boxes"). In case of synthetic tests, the "true" sources may lie within or outside the inverse modelling domain, as shown by Figures 3 and B1 respectively, of Datta et al. (2019).  
 	(iii) The geometry of model parameterization for the inverse problem (parameters "rad_ring" and "w_ring").  
