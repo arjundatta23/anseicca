@@ -29,14 +29,15 @@ The key tasks performed (sequentially) by the code, along with associated variab
 1. Read in receiver/station location information (e.g. Easting/Northing, UTM coordinates) from a user-specified file which is pre-selected and hardwired into the code (variable "coordfile").
 2. Place all the receivers on a uniform 2-D cartesian grid whose size and density are defined by the user ("hlbox_outer" and "ngp_inner").
 3. Select a subset of receivers to work with, based on a relocation error threshold criterion ("glerr_thresh"). The relocation is from actual coordinates to uniform grid coordinates.
-4. Run the central engine of the code, by calling the core "h13" module. This module is an extension of the work by Hanasoge (2013), and its usage is governed by the following key user settings:  
-	(i) Whether working with synthetic data or real data (parameter "use_reald"). Synthetic data is produced within the h13 module by forward modelling, while real data (variable "infile") is read and prepared for use, in the "anseicca\_utils2" module. I have worked with a specific format of input data used by Datta et al. (2019), however you can write your own class to suit your data, and add it to "anseicca\_utils2".  
+4. Read the data (variable "infile") and prepare it for use by the code. This step is perfromed IF AND ONLY IF working with real data, as indicated by parameter "use_reald". The data is read and processed in the "anseicca\_utils2" module. I have worked with a specific format of input data used by Datta et al. (2019), however you can write your own class to suit your data and add it to "anseicca\_utils2".  
+5. Run the central engine of the code, by calling the core "h13" module. This module is an extension of the work by Hanasoge (2013), and its usage is governed by the following key user settings:  
+	(i) Whether working with synthetic or real data. If working with synthetic data, this is generated internally within the h13 module by forward modelling. 
 	(ii) The geometry of the problem (parameter "ratio_boxes"). In case of synthetic tests, the "true" sources may lie within or outside the inverse modelling domain, as shown by Figures 3 and B1 respectively, of Datta et al. (2019).  
 	(iii) The geometry of model parameterization for the inverse problem (parameters "rad_ring" and "w_ring").  
 	(iv) Whether to perform the inversion or not ("do_inv").  
 	(v) Whether to force-stop the inversion after just one iteration or not ("iter_only1"). This option can be useful for testing, damping (L-curve) analysis etc.  
 
-5. Store the results in Python binary archive (.npz) format, compatible with visualization script "view_result_anseicca.py".
+6. Store the results in Python binary archive (.npz) format, compatible with visualization script "view_result_anseicca.py".
 
 Details of different parameters and how to set them are mentioned as code comments. To familiarize yourself with the code structure, I recommend doing synthetic tests ("use_reald"=False) and going through the above steps progressively:
 
