@@ -1,18 +1,32 @@
 #!/usr/bin/python
 
-#import sys
+"""
+Code by Arjun Datta at Tata Institute of Fundamental Research, Mumbai, India
+
+PARALLEL CODE
+
+Author Notes: All the user settings in this code wrapper fall into two categories, which I call Type 1 and Type 2
+		Type 1: those parameters whose values are typically inspired by the user's data set, even when doing synthetic tests only
+			 (e.g. geometry of the problem, wavelengths of interest etc.)
+		Type 2: parameters whose values are the user's personal choice, independent of data/problem at hand
+
+	      Refer to serial version of code for detailed comments including parameter Types.
+"""
+
+##################################################################################################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpi4py import MPI
 
-# Custom module imports
 use_reald=False
+# this variable is required on all processors, in Part 1 (SETUP phase), and it is seen by module u2 at load time
+# which is why it must be defined before importing the module.
+
+# Custom module imports
 import anseicca_utils1 as u1
 import anseicca_utils2 as u2
 import hans2013_parallel as h13
-
-# NB: "use_reald" is a variable that is required on all processors, required in Part 1 (SETUP phase), and one that
-# is seen by module u2 at load time.
 
 #***************************************** Initialize MPI process **********************************************
 comm_out = MPI.COMM_WORLD

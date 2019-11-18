@@ -657,6 +657,8 @@ class inv_cc_amp:
 	
 	def inversion(self,mfk_pos,mfk_neg):
 
+		""" Performs inversion using a standard Gauss-Newton iterative scheme """
+
 		# NB: the data covariance matrix is assumed to be diagonal. Instead of storing and using the potentially HUGE
 		# diagonal matrix, we work with just the vector of data variances.
 
