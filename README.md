@@ -3,6 +3,7 @@ ANSEICCA: Ambient Noise Source Estimation by Inversion of Cross-Correlation Ampl
 
 Datta, A., Hanasoge, S., & Goudswaard, J. (2019). Finite‐frequency inversion of cross‐correlation amplitudes for ambient noise source directivity estimation. Journal of Geophysical Research: Solid Earth, 124, 6653– 6665. https://doi.org/10.1029/2019JB017602
 
+**********************************************************************************************
 A. PACKAGE CONTENTS AND OVERVIEW
 
 1. There are two versions of this code - serial and parallel - each with their own wrappers and core modules. Other modules are common to the two versions. The parallel code uses MPI for Python (mpi4py) and should be significantly faster than the serial version when solving a large inverse problem (large number of receivers/stations).
@@ -12,6 +13,7 @@ A. PACKAGE CONTENTS AND OVERVIEW
 5. The last script in the package is "view_result_anseicca.py" which is used to visualize (plot) the results produced by the code. Final as well as intermediate results (for the iterative inverse solution) may be accessed and visualized.
 6. EXAMPLES directory - contains input file(s) required by the code, making this repository self-contained. No external input is required to get a demo of the working code.
 
+**********************************************************************************************
 B. HOW TO RUN THE CODE
 
 Simple command line usage:
@@ -22,6 +24,7 @@ Simple command line usage:
 
 If you simply clone this repository and run the code on your system following the above instructions, it should run OK using input files from the EXAMPLES directory which have been hardwired into the two (serial and parallel) wrappers. To be able to use the code for your own purposes, you will need to read the description below.
 
+**********************************************************************************************
 C. CODE DESCRIPTION (USER SETTINGS)
 
 The key tasks performed (sequentially) by the code, along with associated variables/parameters in the wrapper, are as follows:
@@ -45,6 +48,7 @@ Details of different parameters and how to set them are mentioned as code commen
 2. Run the code with call to h13 included (undo action above) but with "do_inv" = False. You will see the setup of the inverse problem, i.e. the True and Starting source models.
 3. Set "do\_inv"=True. First run with "iter\_only1"=True, then with "iter\_only1"=False. You will get the inversion result after only 1 iteration, and after natural convergence (unknown number of iterations), respectively.
 
+**********************************************************************************************
 D. VISUALIZATION OF RESULTS
 
 The "view\_result\_anseicca.py" script has options for plotting:
@@ -55,6 +59,7 @@ The "view\_result\_anseicca.py" script has options for plotting:
 
 You can choose to plot any or all of the above by turning on or off the corresponding function calls at the bottom of the script.
 
+**********************************************************************************************
 REFERENCES
 
 Datta, A., Hanasoge, S., & Goudswaard, J. (2019). Finite‐frequency inversion of cross‐correlation amplitudes for ambient noise source directivity estimation. Journal of Geophysical Research: Solid Earth, 124, 6653– 6665. https://doi.org/10.1029/2019JB017602.  
