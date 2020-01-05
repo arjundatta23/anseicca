@@ -505,7 +505,7 @@ class inv_cc_amp:
 				self.distribs_true = np.zeros((self.ngpib,self.ngpib))
 
 			self.distribs_start = np.zeros((self.ngpib,self.ngpib)) 
-			# used to generate the synthetics for inversion; this source distribution is involved in computing source kernels
+			# used to generate the synthetics for inversion; this source distribution IS involved in computing source kernels
 
 			self.mc_true *= mag1
 			nperts=4
@@ -973,7 +973,7 @@ if __name__ == '__main__':
 
 	nrth=8
 	# nrth is just a receiver number threshold below which individual source kernels are stored (and plotted)
-	kcao = inv_cc_amp(hlen_obox,ngp_ibox,numrecs,rlocx,rlocy,wspeed,sig_char)
+	kcao = inv_cc_amp(hlen_obox,ngp_ibox,2,numrecs,rlocx,rlocy,wspeed,sig_char,15,75,True,True)
 
 	# make figures as required
 
@@ -1037,5 +1037,6 @@ if __name__ == '__main__':
 			except ValueError:
 				print "Problem plotting individual source kernels. Please check number of subplots and try again next time"
 		else:
-			sys.exit("Problem with number of source kernels")
+			nc2=kcao.nrecs*(kcao.nrecs-1)/2
+			sys.exit("Problem with number of source kernels: %d %d" %(len(kcao.skers),nc2))
 	plt.show()
