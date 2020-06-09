@@ -20,7 +20,9 @@ Simple command line usage:
 
 1. To run the serial code: "python anseicca\_wrapper\_serial.py"
 2. To run the parallel code: "mpirun -np {n} python anseicca\_wrapper\_parallel.py"; {n} is the number of processors to use, should be equal to the number of receivers/stations in the problem. NOTE: if running on an HPC cluster, this command can be put into a script to be run with a job scheduler such as PBS.
-3. To visualize the results: "python view\_result\_anseicca.py {file containing results produced by code}"
+3. To visualize the results: "python view\_result\_anseicca.py {arg1} {arg2 (OPTIONAL)}", where
+	arg1 = pickle file/directory of files containing results produced by code;
+	arg2 = coordinates file for stations or receivers
 
 If you simply clone this repository and run the code on your system following the above instructions, it should run OK using input files from the EXAMPLES directory which have been hardwired into the two (serial and parallel) wrappers. To be able to use the code for your own purposes, you will need to read the description below.
 
@@ -29,7 +31,7 @@ C. CODE DESCRIPTION (USER SETTINGS)
 
 The key tasks performed (sequentially) by the code, along with associated variables/parameters in the wrapper, are as follows:
 
-1. Read in receiver/station location information (e.g. Easting/Northing, UTM coordinates) from a user-specified file which is pre-selected and hardwired into the code (variable "coordfile").
+1. Read in receiver/station location information (e.g. Easting/Northing, UTM coordinates) from a user-specified coordinates file which is pre-selected and hardwired into the code (variable "coordfile").
 2. Place all the receivers on a uniform 2-D cartesian grid whose size and density are defined by the user ("hlbox\_outer" and "ngp\_inner").
 3. Select a subset of receivers to work with, based on a relocation error threshold criterion ("glerr\_thresh"). The relocation is from actual coordinates to uniform grid coordinates.
 4. Read the data (variable "infile") and prepare it for use by the code. This step is perfromed IF AND ONLY IF working with real data, as indicated by parameter "use_reald". The data is read and processed in the "anseicca\_utils2" module. I have worked with a specific format of input data used by Datta et al. (2019), however you can write your own class to suit your data and add it to "anseicca\_utils2".  
