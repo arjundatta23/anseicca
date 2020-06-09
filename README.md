@@ -20,9 +20,9 @@ Simple command line usage:
 
 1. To run the serial code: "python anseicca\_wrapper\_serial.py"
 2. To run the parallel code: "mpirun -np {n} python anseicca\_wrapper\_parallel.py"; {n} is the number of processors to use, should be equal to the number of receivers/stations in the problem. NOTE: if running on an HPC cluster, this command can be put into a script to be run with a job scheduler such as PBS.
-3. To visualize the results: "python view\_result\_anseicca.py <arg1> <arg2 (OPTIONAL)>", where
-	arg1 = {file/directory of files, containing results produced by code}
-	arg2 = {coordinates file for stations or receivers}
+3. To visualize the results: "python view\_result\_anseicca.py {arg1} {arg2 (OPTIONAL)}", where
+	arg1 = file/directory of files, containing results produced by code;
+	arg2 = coordinates file for stations or receivers
 
 If you simply clone this repository and run the code on your system following the above instructions, it should run OK using input files from the EXAMPLES directory which have been hardwired into the two (serial and parallel) wrappers. To be able to use the code for your own purposes, you will need to read the description below.
 
