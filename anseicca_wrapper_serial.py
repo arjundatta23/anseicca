@@ -33,12 +33,12 @@ import hans2013_serial as h13
 nrecs=289
 # no. of stations/receivers in the network; Type 1
 origx = 406; origy = 8504
-# coordinate origin in units of the receiver coordinates; chosen to have the origin roughly at the network centre; Type 1
+# coordinate origin of the modelling domain (km units); ballpark values chosen to have the origin roughly at the network centre; Type 1
 coordfile="EXAMPLES/coordinates_receivers_h13format.csv"
 
 ################################################################ DEFINE COMPUTATIONAL DOMAIN ##############################################################
 hlbox_outer = 60.
-# half-length of outer box OR length of (side of) inner box, in km; Type 1
+# size of modelling domain (km units); length of (side of) inner box OR half-length of outer box; Type 1
 ngp_inner = 241
 # number of grid points in inner box (half the number of grid points in outer box); determines the grid density and therefore frequency resolution; Type 1
 d_xy=hlbox_outer/(ngp_inner-1)

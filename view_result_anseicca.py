@@ -12,25 +12,6 @@ import matplotlib.pyplot as plt
 # Modules written by me
 import anseicca_utils1 as u1
 
-####################################### coordinates file for receiver distances #################################################
-
-coordfile="/home/arjun/postdoc/Shell_data_Albania/Supporting_Documentation/coordinates_receivers_h13format.csv"
-# this is on the desktop machine
-if not os.path.isfile(coordfile):
-	# this is on the cluster
-	coordfile="/home/arjun/backup_desktop/Shell_data_Albania/Supporting_Documentation/coordinates_receivers_h13format.csv"
-
-rnum, rid, xloc, yloc = u1.read_station_file(coordfile)
-
-#cfh=open(coordfile,'r')
-#entire=cfh.readlines()
-#rnum=np.array(map(lambda p: int(p.split()[0]), entire))
-#xloc=np.array(map(lambda p: float(p.split()[2])/1e3, entire))
-#yloc=np.array(map(lambda p: float(p.split()[3])/1e3, entire))
-#
-#cfh.close()
-#del cfh
-
 #################################################################################################################################
 
 def plot_kernels():
@@ -80,7 +61,7 @@ def plot_models():
 			yobox=np.linspace(-hlbox_outer,hlbox_outer,ngp_outer)
 			xpts_true, ypts_true = np.meshgrid(xobox, yobox)
 			diff_sizes = True
-			
+
 		cax4=ax4.pcolor(xpts_true,ypts_true,kcao_sdtrue,cmap=plt.cm.jet,vmin=mod_min,vmax=mod_max)
 		ax4.plot(kcao_dx*rc_xp, kcao_dx*rc_yp, 'wd', markerfacecolor="None")
 		ax4.tick_params(axis='both', labelsize=14)
@@ -195,7 +176,11 @@ def plot_inversion_progress(bs):
 			#it=p+1
 			#spname = "k=%d" %(it)
 			spname = "k=%d" %(p)
-			axsp=fig.add_subplot(3,3,p+1) #,aspect='equal')
+			try:
+				axsp=fig.add_subplot(3,3,p+1) #,aspect='equal')
+			except ValueError:
+				print "Problem plotting inversion result for iteration >= %d. Mismatch between number of iterations and number of subplots." %(p)
+				return
 			cax=axsp.pcolor(kcao_gx,kcao_gy,kcao_sditer[p,:,:],cmap=plt.cm.jet,vmin=mod_min,vmax=mod_max)
 			axsp.text(0.8,0.85,spname,transform=axsp.transAxes,color='white')
 			#axsp.set_title(spname)
@@ -225,21 +210,32 @@ def plot_Lcurve():
 	ax.legend()
 	ax.set_xlabel("Model norm (relative)")
 	ax.set_ylabel("Misfit")
-	
+
 
 ################################################ Main program ############################################################
 
 if __name__ == '__main__':
 
-	inarg=sys.argv[1]
-	if os.path.isdir(inarg):
-		filelist=[os.path.join(inarg,n) for n in os.listdir(inarg) if n.endswith('.pckl')]
+	inarg1=sys.argv[1]
+	try:
+		coordfile=sys.argv[2] #"EXAMPLES/coordinates_receivers_h13format.csv"
+		orig_coord = True
+	except IndexError:
+		orig_coord = False
+
+	if os.path.isdir(inarg1):
+		filelist=[os.path.join(inarg1,n) for n in os.listdir(inarg1) if n.endswith('.pckl')]
 		nrecs_files=np.zeros(len(filelist))
 		gamma_files=np.zeros(len(filelist))
 		misfit_files=np.zeros(len(filelist))
 		modnorm_files=np.zeros(len(filelist))
-	elif os.path.isfile(inarg):
-		filelist=[inarg]
+	elif os.path.isfile(inarg1):
+		filelist=[inarg1]
+
+	#********************************* read coordinates file if provided *********************************
+
+	if orig_coord:
+		rnum, rid, xloc, yloc = u1.read_station_file(coordfile)
 
 	#********************************* Read the pickle file(s) **************************************************
 	for p, pfile in enumerate(filelist):
@@ -319,15 +315,16 @@ if __name__ == '__main__':
 		adrp=np.zeros((nrecs,nrecs))
 		# adrp -> actual_distance_receiver_pairs
 
-		for b,brec in enumerate(rc[:-1]):
-			urecs=rc[b+1:]
-			x1=xloc[np.searchsorted(rnum,brec)]
-			y1=yloc[np.searchsorted(rnum,brec)]
-			x2=xloc[np.searchsorted(rnum,urecs)]
-			y2=yloc[np.searchsorted(rnum,urecs)]
-			adrp[b+1:,b]=np.sqrt( (x2-x1)**2 + (y2-y1)**2 )
-			adrp[b,b+1:]=adrp[b+1:,b]
-		
+		if orig_coord:
+			for b,brec in enumerate(rc[:-1]):
+				urecs=rc[b+1:]
+				x1=xloc[np.searchsorted(rnum,brec)]
+				y1=yloc[np.searchsorted(rnum,brec)]
+				x2=xloc[np.searchsorted(rnum,urecs)]
+				y2=yloc[np.searchsorted(rnum,urecs)]
+				adrp[b+1:,b]=np.sqrt( (x2-x1)**2 + (y2-y1)**2 )
+				adrp[b,b+1:]=adrp[b+1:,b]
+
 		#******************* get all necessary quantities in vector (1-D array) form **********************************
 		npairs=nrecs*(nrecs-1)/2
 		rp_orig=range(npairs)
@@ -342,7 +339,7 @@ if __name__ == '__main__':
 			cp+=1
 
 		#******** Determine the paths (receiver pairs) for which waveform fits have improved through inversion ********
-		
+
 		binsize=0.5 #2.5 #0.5
 		# this is the bin size for histogram of misfits (see func "plot_inversion_progress" -> "deltad_iter")
 
@@ -361,7 +358,7 @@ if __name__ == '__main__':
 			good_after_n = np.where(abs(kcao_flit_indmis_n[-1])<good_thresh)[0]
 		except IndexError:
 			good_after_n = np.array([])
-		
+
 		nga_total = good_after_p.size + good_after_n.size
 		good_frac = float(nga_total)/(2*npairs)
 		print "Measurements in central histogram bins (P+N) after inversion: %d, %.2f per cent" %(nga_total,100*good_frac)
@@ -431,9 +428,9 @@ if __name__ == '__main__':
 			mod_max=max(np.amax(kcao_sdstart),np.amax(kcao_sdinv))
 
 		#************************************* Make the plots you want ************************************************
-		
+
 		plot_models()
 		plot_kernels()
-		#plot_inversion_progress(binsize)
+		# plot_inversion_progress(binsize)
 
 	plt.show()

@@ -38,7 +38,7 @@ numproc_out = comm_out.Get_size()
 #------------------------------------- Outline of computational domain ------------------------------------------
 
 hlbox_outer = 60.
-# half-length of outer box OR length of (side of) inner box, in km
+# size of modelling domain (km units); length of (side of) inner box OR half-length of outer box
 ngp_inner = 241
 # number of grid points in inner box (half the number of grid points in outer box)
 d_xy=hlbox_outer/(ngp_inner-1)
