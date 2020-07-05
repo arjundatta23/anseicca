@@ -8,8 +8,12 @@ import matplotlib.pyplot as plt
 reald=sys.modules['__main__'].use_reald
 if reald:
 	import obspy.core as oc
-	# Modules written by me
-	import azimuthal_anal_cc as azan	
+	try:
+		# Modules written by me
+		import azimuthal_anal_cc as azan
+		use_azan=True
+	except ImportError:
+		use_azan=False
 
 ###############################################################################################################
 class setup_modelling_domain:
@@ -70,7 +74,7 @@ class setup_modelling_domain:
 		axgrid.set_xlabel('Km')
 		axgrid.set_ylabel('Km')
 		axgrid.set_title("Relative coordinates")
-		axgrid.legend()		
+		axgrid.legend()
 
 ########################################################################################################################################
 
@@ -85,7 +89,7 @@ class cc_data:
 			cc_data.inpfile = infile
 			fDic={'python_binary_archive': cc_data.python_binary_archive()}
 			fDic[funcname]
-			
+
 			si=cc_data.sami
 			fpband=cc_data.fpb
 			ccl=cc_data.cclags
@@ -105,7 +109,10 @@ class cc_data:
 			try:
 				cc_data.recarray=loaded['reclist']
 				cc_data.fpb=loaded['fpband']
-				cc_data.sami=loaded['si'][0]
+				try:
+					cc_data.sami=loaded['si'][0]
+				except IndexError:
+					cc_data.sami=loaded['si']
 				cc_data.cclags=loaded['cclags']
 				cc_data.cookie=loaded['cookie']
 			except KeyError:
@@ -113,7 +120,7 @@ class cc_data:
 
 			cc_data.cclags=np.array(map(lambda x: float("%.2f" %x), cc_data.cclags))
 			# making sure that ccl does not contain elements with more significant digits than are allowed by the sampling interval
-		
+
 			if len(cc_data.cookie.shape)==2:
 				# same-component cross-correlations
 				ctype='sc'
@@ -122,13 +129,13 @@ class cc_data:
 				ctype='ic'
 
 	#*******************************************************************************************************
-	
+
 	class MatrixForm:
 
 		def __init__(self,rn_all,rx_act,ry_act,nrchosen,rnchosen):
 
 			global selec_data, actdrp, actnrp
-			
+
 			# nrchosen -> no. of receivers chosen
 			# rnchosen -> receiver (station) numbers of chosen receivers (stations)
 
@@ -140,8 +147,8 @@ class cc_data:
 			# act_rnum_rp -> similar to self.act_dist_rp but for receiver-pair nos. rather than distances
 
 			selec_data=np.zeros((orig_data.shape[0], nrchosen, nrchosen))
-	
-			# NB: in h13, the synthetic ccs computed directly are those corresponding to the LOWER TRIANGULAR part 
+
+			# NB: in h13, the synthetic ccs computed directly are those corresponding to the LOWER TRIANGULAR part
 			# of the cross-correlation matrix, i.e. Cjk is computed, where j>k. In case of the stored data, what is
 			# stored is the UPPER TRIANGULAR part, i.e. Ckj is stored. These two are of course flipped versions of each
 			# other, but for consistency we actually pass the lower-triangular part to h13. The upper triangular part is
@@ -155,11 +162,11 @@ class cc_data:
 				urecs=rnchosen[b+1:]
 				crbr = map(lambda x: pbefore - 1 + (x-brec), urecs)
 				# crbr is Columns_Relevant_to_Base_Receiver
-				
+
 				#print "Receiver ", brec
 				#print "rbefore and pbefore: ", rbefore, pbefore
 				#print "Selecting columns: ", crbr
-			
+
 				# for consistency with h13, convert UPPER TRIANGULAR cc-s to LOWER TRIANGULAR
 				selec_data[:,b+1:,b]=np.flipud(orig_data[:,crbr])
 
@@ -175,7 +182,7 @@ class cc_data:
 
 			actdrp = self.act_dist_rp
 			actnrp = act_rnum_rp
-	
+
 	#********************************************************************************************************
 
 	class Process:
@@ -200,7 +207,7 @@ class cc_data:
 					print trial
 					trial -= 10**(om)
 					mtrial = int(trial*(10**(abs(om))))
-				
+
 				self.dfac=mtrial/msi
 			else:
 				self.dfac=1
@@ -218,10 +225,10 @@ class cc_data:
 			self.nsam=(orig_data.shape[0] - 1)/self.dfac #+1
 			lsi = -(dsd.shape[0] - self.nsam) if (dsd.shape[0] - self.nsam) > 0 else None
 			self.use_data = dsd[:lsi,:,:]
-			
+
 			if abs(self.ds_ccl.size - self.nsam)>0:
 				self.ds_ccl=self.ds_ccl[:-1]
-			
+
 			if (self.ds_ccl.size != self.nsam) or (self.use_data.shape[0] != self.nsam):
 				raise SystemExit("Discrepancy in number of samples after downsampling")
 			else:
@@ -242,13 +249,13 @@ class cc_data:
 			tstart=actdrp/wspeed + lefw
 			tstart[tstart<0] = 0.
 			tend=actdrp/wspeed + rigw
-			
+
 			tap_mid=False
 			# If True, the complete cc is tapered not only at the ends but also in the middle. This is
 			# achieved by individually tapering the positive and negative branches on the "start" side.
-			# In DHG_2019, we kept this parameter set to False, meaning that the entire cc is 
+			# In DHG_2019, we kept this parameter set to False, meaning that the entire cc is
 			# treated as one waveform, not separated into positive and negative branches
-	
+
 			pb_iws=np.searchsorted(self.ds_ccl,tstart)
 			pb_iwe=np.searchsorted(self.ds_ccl,tend)
 			nb_iws=np.searchsorted(self.ds_ccl,-tend)-1
@@ -257,7 +264,7 @@ class cc_data:
 
 			#self.snr=np.nan*np.zeros((nrchosen,nrchosen))
 			self.snr=1e3*np.ones((nrchosen,nrchosen))
-	
+
 			hnsam = (self.nsam)/2 if (self.nsam)%2==0 else ((self.nsam)-1)/2
 			# hnsam -> half_the_number_of_samples
 			cchlen = reclen/2
@@ -309,7 +316,7 @@ class cc_data:
 	class Errors:
 
 		def __init__(self,num_chosen,stepaz):
-		
+
 			self.DelE = np.zeros((num_chosen,num_chosen))
 			# in h13 we only need one (triangular) half of this matrix to cover ALL receiver pairs
 			# However, we fill both halves here to account for the positive and negative branches
@@ -325,24 +332,26 @@ class cc_data:
 				# inter-component cross-correlations
 				ctype='ic'
 
-			for az in np.arange(0,swpmax,stepaz):
-				saefo = azan.do_single_azimuth(orig_data,allstored,si,ccl,ctype,fpband,az,stepaz,(False,False,False,True))
-				# saefo -> single_azimuth_energy_fitting_object
-				for k,actrp in enumerate(saefo.azrp):
-					h13_ind = np.where(actnrp==actrp)
-					if len(h13_ind[0])>0:
-						#print k, actrp, h13_ind
-						self.DelE[h13_ind] = saefo.res_ep_pb[k]
-						self.DelE[h13_ind[::-1]] = saefo.res_ep_nb[k]
-					else:
-						pass
+			if use_azan:
+
+				for az in np.arange(0,swpmax,stepaz):
+					saefo = azan.do_single_azimuth(orig_data,allstored,si,ccl,ctype,fpband,az,stepaz,(False,False,False,True))
+					# saefo -> single_azimuth_energy_fitting_object
+					for k,actrp in enumerate(saefo.azrp):
+						h13_ind = np.where(actnrp==actrp)
+						if len(h13_ind[0])>0:
+							#print k, actrp, h13_ind
+							self.DelE[h13_ind] = saefo.res_ep_pb[k]
+							self.DelE[h13_ind[::-1]] = saefo.res_ep_nb[k]
+						else:
+							pass
 
 #######################################################################################################################################
 
 class post_run():
-	
+
 	def __init__(self,ws,osmd,oica,schar,ring_rad,ring_w,dowhat):
-		
+
 		self.wspeed = ws
 		self.osmd = osmd
 		self.oica = oica
@@ -393,14 +402,14 @@ class post_run():
 			#pickle.dump(self.oica.mc_true,jar)
 			pickle.dump(self.oica.distribs_true,jar)
 		jar.close()
-			
+
 		#plt.tight_layout() # use this when axis labels are off the plot
 
 	def make_plots(self):
-		
+
 		if reald:
 			plt.scatter(self.oica.alldist,self.oica.egy_obs)
-			plt.plot(self.oica.alldist,self.oica.oef)	
+			plt.plot(self.oica.alldist,self.oica.oef)
 		else:
 			def plot_mod(inmod,ptitle):
 				fig=plt.figure()
