@@ -15,8 +15,6 @@ def read_station_file(st_file):
     try:
         st_no=list(map(lambda p: int(p.split()[0]), entire))
         st_id=list(map(lambda p: p.split()[1], entire))
-        # xr=np.array(map(lambda p: float(p.split()[2])/1e3, entire))
-        # yr=np.array(map(lambda p: float(p.split()[3])/1e3, entire))
         xr=np.array([float(p.split()[2])/1e3 for p in entire])
         yr=np.array([float(p.split()[3])/1e3 for p in entire])
     except IndexError:
