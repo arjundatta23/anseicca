@@ -3,26 +3,28 @@ import numpy as np
 ###############################################################################################################
 def read_station_file(st_file):
 
-	""" Format of input file MUST be:
-		COLUMNS(4): <Sl no.> <ID> <Easting(x)> <Northing(y)>
-		ROWS(n + 1): one header line followed by n lines; n is no. of stations/receivers
-	"""
+    """ Format of input file MUST be:
+    	COLUMNS(4): <Sl no.> <ID> <Easting(x)> <Northing(y)>
+    	ROWS(n + 1): one header line followed by n lines; n is no. of stations/receivers
+    """
 
-	cfh=open(st_file,'r')
-	
-	cfh.readline()
-	entire=cfh.readlines()
-	try:
-		st_no=map(lambda p: int(p.split()[0]), entire)
-		st_id=map(lambda p: p.split()[1], entire)
-		xr=np.array(map(lambda p: float(p.split()[2])/1e3, entire))
-		yr=np.array(map(lambda p: float(p.split()[3])/1e3, entire))
-	except IndexError:
-		raise SystemExit("Problem reading %s. Check file format." %(st_file))
+    cfh=open(st_file,'r')
 
-	cfh.close()
-	del cfh
-	return st_no, st_id, xr, yr
+    cfh.readline()
+    entire=cfh.readlines()
+    try:
+        st_no=list(map(lambda p: int(p.split()[0]), entire))
+        st_id=list(map(lambda p: p.split()[1], entire))
+        # xr=np.array(map(lambda p: float(p.split()[2])/1e3, entire))
+        # yr=np.array(map(lambda p: float(p.split()[3])/1e3, entire))
+        xr=np.array([float(p.split()[2])/1e3 for p in entire])
+        yr=np.array([float(p.split()[3])/1e3 for p in entire])
+    except IndexError:
+        raise SystemExit("Problem reading %s. Check file format." %(st_file))
+
+    cfh.close()
+    del cfh
+    return st_no, st_id, xr, yr
 
 ###############################################################################################################
 
@@ -30,7 +32,7 @@ class SignalParameters():
 		""" defines the signal characteristics used for modelling sources (and cross-correlations) as
 		    well as, in case of real data, the processing parameters applied to the primary data before
 		    cross-correlation.
-		    Attributes: 
+		    Attributes:
 				dt: temporal sampling interval (seconds),
 				nsam: number of samples,
 				cf: center (peak) frequency, (Hz)
@@ -50,12 +52,12 @@ class somod:
 	def ringg(ngp,dx,xall,yall,theta,rad,sigma_fac):
 		ans=np.zeros((ngp,ngp))
 		#rad=r*dx
-			
+
 		for j in range(ngp):
 			x0 = rad*np.cos(theta)
 			y0 = rad*np.sin(theta)
 			ans[:,j] = np.exp( -((xall[j] - x0)**2 + (yall - y0)**2)/(sigma_fac*(dx**2)) )
-			
+
 		return ans
 
 	#******************************************************************************************

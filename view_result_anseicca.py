@@ -68,7 +68,7 @@ def plot_models():
 		#for i in range(len(rc_xp)):
 		#	ax4.annotate(i, xy=(kcao_dx*rc_xp[i],kcao_dx*rc_yp[i]), color='green')
 		plt.colorbar(cax4,ax=ax4)
-		print "Min and max values in True model: ", np.amin(kcao_sdtrue), np.amax(kcao_sdtrue)
+		print("Min and max values in True model: ", np.amin(kcao_sdtrue), np.amax(kcao_sdtrue))
 
 	fig3=plt.figure()
 	ax3=fig3.add_subplot(111)
@@ -92,7 +92,7 @@ def plot_models():
 	#if diff_sizes:
 	#	ax5.set_xlim(-hlbox_outer,hlbox_outer)
 	#	ax5.set_ylim(-hlbox_outer,hlbox_outer)
-	print "Min and max values in inverted result: ", np.amin(kcao_sdinv), np.amax(kcao_sdinv)
+	print("Min and max values in inverted result: ", np.amin(kcao_sdinv), np.amax(kcao_sdinv))
 	try:
 		cax5=ax5.pcolor(kcao_gx,kcao_gy,kcao_sdinv,cmap=plt.cm.jet,vmin=mod_min,vmax=mod_max)
 		#cax5=ax5.pcolor(kcao_gx,kcao_gy,kcao_sdinv,cmap=plt.cm.jet,vmin=0.0,vmax=1.25)
@@ -113,12 +113,11 @@ def plot_inversion_progress(bs):
 		mv1=max(max(kcao_flit_indmis_p[0]),max(kcao_flit_indmis_n[0]))
 		mv2=min(min(kcao_flit_indmis_p[0]),min(kcao_flit_indmis_n[0]))
 		maxval=np.round(max(abs(mv1),abs(mv2)))
-		print "Max val for histograms is: ", maxval
+		print("Max val for histograms is: ", maxval)
 		hbe_p=np.arange(bs/2,maxval+bs,bs)
 		hbe_n=-1*hbe_p[::-1]
 		hbe = np.hstack((hbe_n,hbe_p))
-		#hbe -> histogram_bin_edges
-		#print hbe
+		# hbe -> histogram_bin_edges
 
 		ntot="$N_{tot}$\n= %d" %(npairs)
 
@@ -179,7 +178,7 @@ def plot_inversion_progress(bs):
 			try:
 				axsp=fig.add_subplot(3,3,p+1) #,aspect='equal')
 			except ValueError:
-				print "Problem plotting inversion result for iteration >= %d. Mismatch between number of iterations and number of subplots." %(p)
+				print("Problem plotting inversion result for iteration >= %d. Mismatch between number of iterations and number of subplots." %(p))
 				return
 			cax=axsp.pcolor(kcao_gx,kcao_gy,kcao_sditer[p,:,:],cmap=plt.cm.jet,vmin=mod_min,vmax=mod_max)
 			axsp.text(0.8,0.85,spname,transform=axsp.transAxes,color='white')
@@ -194,8 +193,8 @@ def plot_inversion_progress(bs):
 ###############################################################################################################
 
 def plot_Lcurve():
-	print "Model norm: ", sorted_modnorm
-	print "Misfit: ", sorted_misfit
+	print("Model norm: ", sorted_modnorm)
+	print("Misfit: ", sorted_misfit)
 	fig=plt.figure()
 	ax=fig.add_subplot(111)
 	ax.plot(sorted_modnorm,sorted_misfit)
@@ -241,7 +240,7 @@ if __name__ == '__main__':
 	for p, pfile in enumerate(filelist):
 
 		jar=gzip.open(pfile)
-		print "Reading ", pfile
+		print("Reading ", pfile)
 		reald=pickle.load(jar)
 		rc=pickle.load(jar)
 		rc_xp=pickle.load(jar)
@@ -284,8 +283,8 @@ if __name__ == '__main__':
 			mod_norm = np.sum(np.square(kcao_allit_mc[-1]))/np.sum(np.square(kcao_allit_mc[0]))
 			modnorm_files[p]=mod_norm
 		else:
-			print "gamma value is: ", kcao_gamma
-			print "Number of iterations: ", len(kcao_allit_misfit), len(kcao_allit_mc)
+			print("gamma value is: ", kcao_gamma)
+			print("Number of iterations: ", len(kcao_allit_misfit), len(kcao_allit_mc))
 
 	#************************************** Finished reading file(s) **********************************************
 
@@ -296,15 +295,15 @@ if __name__ == '__main__':
 		sortind = np.argsort(gamma_files)
 		sorted_misfit = misfit_files[sortind]
 		sorted_modnorm = modnorm_files[sortind]
-		print "Sorted gamma values: ", np.sort(gamma_files)
+		print("Sorted gamma values: ", np.sort(gamma_files))
 
 		plot_Lcurve()
 	else:
 		misfit_start = 0.5*np.sum(np.square(kcao_flit_indmis_p[0]) + np.square(kcao_flit_indmis_n[0]))
 		misfit_end = 0.5*np.sum(np.square(kcao_flit_indmis_p[-1]) + np.square(kcao_flit_indmis_n[-1]))
 		if np.round(misfit_start,6) != np.round(kcao_allit_misfit[0],6) or np.round(misfit_end,6) != np.round(kcao_allit_misfit[-1],6):
-			print "Initial misfit with and without errors: ", kcao_allit_misfit[0], misfit_start
-			print "Final misfit with and without errors: ", kcao_allit_misfit[-1], misfit_end
+			print("Initial misfit with and without errors: ", kcao_allit_misfit[0], misfit_start)
+			print("Final misfit with and without errors: ", kcao_allit_misfit[-1], misfit_end)
 
 		nrecs = len(rc_xp)
 
@@ -326,10 +325,10 @@ if __name__ == '__main__':
 				adrp[b,b+1:]=adrp[b+1:,b]
 
 		#******************* get all necessary quantities in vector (1-D array) form **********************************
-		npairs=nrecs*(nrecs-1)/2
-		rp_orig=range(npairs)
-		rp_kcao=range(npairs)
-		rp_dist=range(npairs)
+		npairs=int(nrecs*(nrecs-1)/2)
+		rp_orig=list(range(npairs))
+		rp_kcao=list(range(npairs))
+		rp_dist=list(range(npairs))
 		cp=0
 		for x in itertools.combinations(range(nrecs),2):
 			rp_kcao[cp]=x[::-1]
@@ -361,7 +360,7 @@ if __name__ == '__main__':
 
 		nga_total = good_after_p.size + good_after_n.size
 		good_frac = float(nga_total)/(2*npairs)
-		print "Measurements in central histogram bins (P+N) after inversion: %d, %.2f per cent" %(nga_total,100*good_frac)
+		print("Measurements in central histogram bins (P+N) after inversion: %d, %.2f per cent" %(nga_total,100*good_frac))
 
 		irpi_pos = np.intersect1d(bad_before_p, good_after_p)
 		irpi_neg = np.intersect1d(bad_before_n, good_after_n)
@@ -380,15 +379,15 @@ if __name__ == '__main__':
 
 		if nrecs<30:
 			#spl = np.where(kcao_flit_indmis_n[0]<-0.7)[0]
-			print "List of GOOD fits after inversion (regardless of good or bad BEFORE):"
-			print "RP (kcao)\t\tRP(actual)\t\tInterstation distance (km)"
+			print("List of GOOD fits after inversion (regardless of good or bad BEFORE):")
+			print("RP (kcao)\t\tRP(actual)\t\tInterstation distance (km)")
 			for k in really_good:
-				print rp_kcao[k], "\t\t", rp_orig[k], "\t\t", rp_dist[k]
-			#print "List of fits IMPROVED by inversion (both branch fits were poor BEFORE inversion):"
-			#print "RP (kcao)\tRP(actual)"
-			#for k in irpi_both:
-			#	print rp_kcao[k], "\t\t", rp_orig[k]
-			#print "SPECIAL: "
+				print(rp_kcao[k], "\t\t", rp_orig[k], "\t\t", rp_dist[k])
+			# print("List of fits IMPROVED by inversion (both branch fits were poor BEFORE inversion):")
+			# print("RP (kcao)\tRP(actual)")
+			# for k in irpi_both:
+			# 	print(rp_kcao[k], "\t\t", rp_orig[k])
+			# print("SPECIAL: ")
 
 		#************************* Compute the models from the stored model coefficients ******************************
 

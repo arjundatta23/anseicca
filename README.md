@@ -1,5 +1,5 @@
 # anseicca
-ANSEICCA: Ambient Noise Source Estimation by Inversion of Cross-Correlation Amplitudes. This is a seismological waveform inversion code (written in Python 2.7) for ambient noise source directivity estimation. It implements the technique described by:
+ANSEICCA: Ambient Noise Source Estimation by Inversion of Cross-Correlation Amplitudes. This is a seismological waveform inversion (Python) code for ambient noise source directivity estimation. It implements the technique described by:
 
 Datta, A., Hanasoge, S., & Goudswaard, J. (2019). Finite‐frequency inversion of cross‐correlation amplitudes for ambient noise source directivity estimation. Journal of Geophysical Research: Solid Earth, 124, 6653– 6665. https://doi.org/10.1029/2019JB017602
 
@@ -11,15 +11,22 @@ A. PACKAGE CONTENTS AND OVERVIEW
 3. The parallel code (wrapper) is "anseicca\_wrapper\_parallel.py" and it uses the core module "hans2013\_parallel.py".
 4. The common modules are "anseicca\_utils1.py" and "anseicca\_utils2.py".
 5. The last script in the package is "view\_result\_anseicca.py" which is used to visualize (plot) the results produced by the code. Final as well as intermediate results (for the iterative inverse solution) may be accessed and visualized.
-6. EXAMPLES directory - contains input file(s) required by the code, making this repository self-contained. No external input is required to get a demo of the working code.
+6. EXAMPLES directory - contains input file(s) required by the code.
+
+Finally, if using this code with a 1-D Earth model, you will need the 'SW1D_earthsr' set of modules, which is available as a separate repository: https://github.com/arjundatta23/SW1D_earthsr
 
 **********************************************************************************************
 B. HOW TO RUN THE CODE
 
-Simple command line usage:
+Using a 0-D Earth model (2-D modelling domain):
 
 1. To run the serial code: "python anseicca\_wrapper\_serial.py"
-2. To run the parallel code: "mpirun -np {n} python anseicca\_wrapper\_parallel.py"; {n} is the number of processors to use, should be equal to the number of receivers/stations in the problem. NOTE: if running on an HPC cluster, this command can be put into a script to be run with a job scheduler such as PBS.
+2. To run the parallel code: "mpiexec -np {n} python anseicca\_wrapper\_parallel.py"; {n} is the number of processors to use, should be equal to the number of receivers/stations in the problem. NOTE: if running on an HPC cluster, this command can be put into a script to be run with a job scheduler such as PBS.
+
+Using a 1-D Earth model (3-D modelling domain):
+
+On the command line, simply add three arguments: <mod\_file> <egn\_file> <disp\_file>. These are ASCII text files containing the 1-D Earth model, surface wave eigenfunctions and dispersion respectively (all in 'earthsr' format and compatible with the 'SW1D_earthsr' modules.)
+
 3. To visualize the results: "python view\_result\_anseicca.py {arg1} {arg2 (OPTIONAL)}", where
 	arg1 = pickle file/directory of files containing results produced by code;
 	arg2 = coordinates file for stations or receivers
@@ -36,7 +43,7 @@ The key tasks performed (sequentially) by the code, along with associated variab
 3. Select a subset of receivers to work with, based on a relocation error threshold criterion ("glerr\_thresh"). The relocation is from actual coordinates to uniform grid coordinates.
 4. Read the data (variable "infile") and prepare it for use by the code. This step is perfromed IF AND ONLY IF working with real data, as indicated by parameter "use_reald". The data is read and processed in the "anseicca\_utils2" module. I have worked with a specific format of input data used by Datta et al. (2019), however you can write your own class to suit your data and add it to "anseicca\_utils2".  
 5. Run the central engine of the code, by calling the core "h13" module. This module is an extension of the work by Hanasoge (2013), and its usage is governed by the following key user settings:  
-	(i) Whether working with synthetic or real data. If working with synthetic data, this is generated internally within the h13 module by forward modelling. 
+	(i) Whether working with synthetic or real data. If working with synthetic data, this is generated internally within the h13 module by forward modelling.
 	(ii) The geometry of the problem (parameter "ratio_boxes"). In case of synthetic tests, the "true" sources may lie within or outside the inverse modelling domain, as shown by Figures 3 and B1 respectively, of Datta et al. (2019).  
 	(iii) The geometry of model parameterization for the inverse problem (parameters "rad\_ring" and "w\_ring").  
 	(iv) Whether to perform the inversion or not ("do_inv").  

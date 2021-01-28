@@ -30,7 +30,7 @@ def plot_waveforms_flit(a,b):
 			ax.axvline(x=kcao_t[kcao_posl[a,b]],ls="--",color='k',alpha=0.3)
 		except IndexError:
 			# this happens when the window is the entire branch (usually with synthetic inversions)
-			print "No lines for window.."
+			print("No lines for window..")
 			pass
 		ax.set_title(ptitle[i])
 		if z!=0:
@@ -109,14 +109,13 @@ def deltat_hist():
 	mv1=max(max(deltat_pos_before),max(deltat_neg_before))
 	mv2=min(min(deltat_pos_before),min(deltat_neg_before))
 	maxval=np.round(max(abs(mv1),abs(mv2)))
-	print "Max val for histograms is: ", maxval
+	print("Max val for histograms is: ", maxval)
 	hbe_p=np.arange(bs/2,maxval+bs,bs)
 	hbe_n=-1*hbe_p[::-1]
 	hbe = np.hstack((hbe_n,hbe_p))
-	#hbe -> histogram_bin_edges
-	#print hbe
+	# hbe -> histogram_bin_edges
 
-	print "Measurements in central histogram bins (P+N) after inversion: %d, %.2f per cent" %(cenbin_tot,100*cenbin_frac)
+	print("Measurements in central histogram bins (P+N) after inversion: %d, %.2f per cent" %(cenbin_tot,100*cenbin_frac))
 	ntot="$N_{tot}$\n= %d" %(npairs)
 	fig = plt.figure()
 	try:
@@ -159,9 +158,9 @@ elif os.path.isfile(inarg):
 #********************************* Read the binary archive(s) **************************************************
 for p,pfile in enumerate(filelist):
 	barch=pfile #sys.argv[1]
-	print "Reading ", barch
+	print("Reading ", barch)
 	loaded = np.load(barch)
-	#print loaded.files
+	# print(loaded.files)
 	kcao_t=loaded['t']
 	try:
 		kcao_c=loaded['wsp']
@@ -176,8 +175,8 @@ for p,pfile in enumerate(filelist):
 	if (kcao_obscross.shape[1] != kcao_obscross.shape[2]) or (kcao_obscross.shape != kcao_syncross_init.shape) or (kcao_obscross.shape != kcao_syncross_final.shape):
 		sys.exit("Problem with stored matrices for obs and syn waveforms")
 	elif len(filelist)==1:
-		print "Number of receivers is: ", kcao_obscross.shape[1]
-		print "Wavespeed used is: ", kcao_c
+		print("Number of receivers is: ", kcao_obscross.shape[1])
+		print("Wavespeed used is: ", kcao_c)
 
 	kcao_negl = kcao_win_ind[0,:,:]
 	kcao_negr = kcao_win_ind[1,:,:]
@@ -192,7 +191,7 @@ for p,pfile in enumerate(filelist):
 	# get the traveltime discrepancies
 	dt = np.round(kcao_t[1] - kcao_t[0],1)
 	nrecs=kcao_obscross.shape[1]
-	npairs=nrecs*(nrecs-1)/2
+	npairs=int(nrecs*(nrecs-1)/2)
 	deltat_pos_before=np.zeros(npairs)
 	deltat_neg_before=np.zeros(npairs)
 	deltat_pos_after=np.zeros(npairs)
